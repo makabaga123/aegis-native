@@ -7,3 +7,5 @@ backend/data/
 backend/reports/generated/
 .pytest_cache/
 .DS_Store
+frontend/dist/
+frontend/node_modules/

@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import os
+
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from backend.api import agent, falco, kernel, mcp_api, multi_agent, report, runtime, scan
 from backend.models.database import init_db
@@ -12,6 +16,14 @@ app = FastAPI(
     version="1.0.0",
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(scan.router)
 app.include_router(falco.router)
 app.include_router(report.router)
@@ -20,6 +32,18 @@ app.include_router(agent.router)
 app.include_router(multi_agent.router)
 app.include_router(mcp_api.router)
 app.include_router(kernel.router)
+
+FRONTEND_DIST = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
+
+if os.path.isdir(FRONTEND_DIST):
+    app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIST, "assets")), name="assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_frontend(full_path: str = ""):
+        path = os.path.join(FRONTEND_DIST, full_path) if full_path else os.path.join(FRONTEND_DIST, "index.html")
+        if os.path.isfile(path):
+            return FileResponse(path)
+        return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
 
 
 @app.on_event("startup")
@@ -32,34 +56,19 @@ def health():
     return {"status": "ok"}
 
 
-@app.get("/", response_class=HTMLResponse)
-def index():
-    return """
-    <!doctype html>
-    <html lang="zh-CN">
-    <head>
-      <meta charset="utf-8">
-      <title>Cloud Native Security Platform</title>
-      <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; background:#f6f7fb; margin:0; }
-        .wrap { max-width: 980px; margin: 40px auto; background:white; padding:32px; border-radius:20px; box-shadow: 0 10px 30px rgba(15,23,42,.08); }
-        code, pre { background:#f3f4f6; padding:2px 6px; border-radius:6px; }
-        a { color:#2563eb; text-decoration:none; }
-      </style>
-    </head>
-    <body><div class="wrap">
-      <h1>基于 Kubernetes 的云原生安全检测与风险治理平台</h1>
-      <p>已启动。你可以通过 Swagger UI 或 curl 调用扫描接口。</p>
-      <ul>
-        <li><a href="/docs">打开 API 文档 /docs</a></li>
-        <li><a href="/api/report/html">查看 HTML 风险报告</a></li>
-        <li><a href="/api/report/findings">查看 Findings JSON</a></li>
-        <li><a href="/api/runtime/timeline">查看 Runtime EDR 时间线</a></li>
-        <li><a href="/api/mcp/tools">查看 MCP 工具</a></li>
-      </ul>
-      <h2>示例命令</h2>
-      <pre>curl -X POST http://127.0.0.1:8000/api/scan/image -H "Content-Type: application/json" -d '{"image":"nginx:latest"}'</pre>
-      <pre>curl -X POST http://127.0.0.1:8000/api/scan/dockerfile -F "file=@examples/vulnerable-dockerfile/Dockerfile"</pre>
-      <pre>curl -X POST http://127.0.0.1:8000/api/scan/k8s-yaml -F "file=@examples/vulnerable-k8s-yaml/deployment.yaml"</pre>
-    </div></body></html>
-    """
+@app.get("/api/")
+def api_index():
+    return {
+        "name": "AegisNative API",
+        "version": "1.0.0",
+        "endpoints": {
+            "scan": "/api/scan/",
+            "runtime": "/api/runtime/",
+            "agent": "/api/agent/",
+            "multi_agent": "/api/multi-agent/",
+            "mcp": "/api/mcp/",
+            "report": "/api/report/",
+            "kernel": "/api/kernel/",
+            "falco": "/api/falco/",
+        },
+    }
