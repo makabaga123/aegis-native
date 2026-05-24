@@ -28,7 +28,7 @@
 
 项目通过 **Supervisor 多 Agent 调度**、**A2A 风格智能体通信**、**MCP 风格工具调用层**，对 Dockerfile、容器镜像、Kubernetes YAML / RBAC、Terraform、云资源配置、Falco / eBPF 运行时事件进行统一检测、关联分析和修复建议生成。
 
-它不是单纯调用一个扫描器，而是尝试把云原生安全治理拆成多个专业安全 Agent：
+它不是单纯调用一个扫描器，而是把云原生安全治理拆成多个专业安全 Agent：
 
 ```text
 Dockerfile 风险检测
@@ -40,18 +40,15 @@ Dockerfile 风险检测
     + LLM 辅助解释与修复建议
     = 云原生安全风险治理闭环
 ```
-
-> 当前项目定位为学习、实验、Demo 与简历展示级安全平台，不建议直接用于生产环境阻断策略。
-
 ---
 
 ## 适合用来做什么
 
-- 云原生安全学习项目
-- DevSecOps 安全检测平台 Demo
+- 云原生安全项目
+- DevSecOps 安全检测平台
 - AI Agent for Security 实践项目
 - CNAPP / CWPP / KSPM / CSPM 入门项目
-- Kubernetes 安全、容器安全、运行时安全学习样例
+- Kubernetes 安全、容器安全、运行时安全样例
 
 ---
 
