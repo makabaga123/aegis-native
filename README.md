@@ -52,7 +52,6 @@ Dockerfile 风险检测
 - AI Agent for Security 实践项目
 - CNAPP / CWPP / KSPM / CSPM 入门项目
 - Kubernetes 安全、容器安全、运行时安全学习样例
-- 简历项目、面试讲解项目、GitHub 开源展示项目
 
 ---
 
