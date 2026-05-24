@@ -7,6 +7,8 @@
 <p align="center">
   <a href="#"><img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-blue"></a>
   <a href="#"><img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-Backend-009688"></a>
+  <a href="#"><img alt="React" src="https://img.shields.io/badge/React-19-61DAFB"></a>
+  <a href="#"><img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-Frontend-3178C6"></a>
   <a href="#"><img alt="Kubernetes" src="https://img.shields.io/badge/Kubernetes-Security-326CE5"></a>
   <a href="#"><img alt="Multi Agent" src="https://img.shields.io/badge/Multi--Agent-Supervisor-purple"></a>
   <a href="#"><img alt="MCP" src="https://img.shields.io/badge/MCP--style-Tools-orange"></a>
@@ -260,15 +262,15 @@ POST /api/kernel/events/batch
 
 ## LLM Provider 支持
 
-项目支持通过环境变量切换 LLM Provider。
+项目支持通过 `.env` 文件或环境变量切换 LLM Provider。**不会在启动时弹出交互式提示要求输入 API Key** — 所有配置都是声明式的。
 
-默认模式：
+默认模式（无需 API Key，开箱即用）：
 
 ```bash
 export LLM_PROVIDER=local
 ```
 
-`local` 模式不会调用外部大模型，而是使用本地规则推理与 Agent 关联分析。
+`local` 模式不调用任何外部大模型，所有检测、关联分析、风险评分均由内置规则引擎完成。这也是为什么启动后不会让你输入 API Key — 默认配置下根本不需要。当你需要 LLM 生成修复建议或更智能的关联分析时，再切换到下面的 Provider。
 
 ### DeepSeek
 
@@ -316,7 +318,43 @@ export OLLAMA_BASE_URL="http://127.0.0.1:11434/v1"
 export OLLAMA_MODEL="qwen2.5-coder:7b"
 ```
 
-> 所有 API Key 都只从运行时环境变量读取，不会写死在代码或配置文件中。
+> **注意：系统不会在启动时交互式地让你输入 API Key。** 所有配置都通过 `.env` 文件或操作系统环境变量完成。复制 `.env.example` 为 `.env`，取消对应 Provider 的注释并填入你的 Key，然后重启服务即可。
+
+---
+
+## 前端 Dashboard
+
+项目包含一个基于 React 19 + TypeScript + Vite + Tailwind CSS 4 的现代化前端 Dashboard，覆盖所有后端功能：
+
+| 页面 | 路由 | 功能 |
+|---|---|---|
+| Landing | `/` | 产品展示页，介绍平台特性与架构 |
+| Dashboard | `/dashboard` | 系统状态概览，快速导航到各工具 |
+| Scan Hub | `/scan` | Dockerfile / 镜像 (Trivy) / K8s YAML 扫描 |
+| AI Agent | `/agent` | 单 Agent 分析，支持文件上传与 JSON 输入 |
+| Multi-Agent | `/multi-agent` | Supervisor 多 Agent 协同分析，含内核事件 |
+| Runtime EDR | `/runtime` | 运行时事件时间线，可展开查看详情 |
+| MCP Tools | `/mcp` | MCP 工具列表，可在线调用查看结果 |
+| Reports | `/reports` | Findings 列表与 Task 历史记录 |
+
+### 启动前端
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+前端运行在 `http://localhost:3000`，通过 Vite proxy 将 `/api` 请求转发到后端 `http://localhost:8000`。
+
+### 生产构建
+
+```bash
+cd frontend
+npm run build
+```
+
+构建产物在 `frontend/dist/`，后端会自动 serve 静态文件。
 
 ---
 
@@ -497,7 +535,15 @@ aegis-native/
 │
 ├── deploy/                     # Docker / K8s / Runtime 部署文件
 ├── docs/                       # 设计文档
-├── frontend/                   # 简单前端页面
+├── frontend/                   # React 19 前端 Dashboard
+│   ├── src/
+│   │   ├── components/         # Header, Footer, Hero, Features 等
+│   │   │   └── ui/             # Badge, CodeBlock, FileUpload 等通用组件
+│   │   ├── pages/              # Landing, Dashboard, ScanHub, Agent 等 8 个页面
+│   │   └── lib/                # API 客户端层
+│   ├── index.html
+│   ├── package.json
+│   └── vite.config.ts
 ├── scripts/                    # 辅助脚本
 ├── tests/                      # 测试用例
 ├── run_demo.py                 # 一键 Demo
@@ -532,6 +578,7 @@ python -m pytest -q
 - [x] MCP-style 工具层
 - [x] DeepSeek / 智谱 / GPT / Ollama Provider 适配
 - [x] HTML 报告生成
+- [x] Web Dashboard (React 19 + TypeScript + Tailwind 4)
 - [ ] 标准 MCP Server / Client 兼容
 - [ ] 更完整的 A2A 协议兼容
 - [ ] Web Dashboard
@@ -568,7 +615,7 @@ python -m pytest -q
 - 增强 Runtime EDR 检测逻辑
 - 对接更多 LLM Provider
 - 对接标准 MCP / A2A 实现
-- 增加前端 Dashboard
+- 完善前端 Dashboard 功能和交互
 - 增强报告模板
 - 增加真实靶场样例
 
