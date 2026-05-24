@@ -1,0 +1,11 @@
+services:
+  security-platform:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - SECURITY_PLATFORM_DB=/app/backend/data/security_platform.db
+    volumes:
+      - ../backend/data:/app/backend/data

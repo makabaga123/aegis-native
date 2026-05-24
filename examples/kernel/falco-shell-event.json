@@ -1,0 +1,13 @@
+{
+  "rule": "Terminal shell in container",
+  "priority": "WARNING",
+  "output": "A shell was spawned in a container",
+  "output_fields": {
+    "evt.type": "execve",
+    "proc.name": "bash",
+    "proc.cmdline": "bash -i",
+    "k8s.ns.name": "default",
+    "k8s.pod.name": "web-demo-abc",
+    "container.name": "web"
+  }
+}

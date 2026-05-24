@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>云原生安全检测报告</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; margin: 0; background: #f6f7fb; color: #1f2937; }
+    .container { max-width: 1180px; margin: 0 auto; padding: 28px; }
+    .hero { background: #111827; color: #fff; padding: 28px; border-radius: 18px; margin-bottom: 20px; }
+    .hero h1 { margin: 0 0 8px; font-size: 28px; }
+    .hero p { margin: 0; color: #d1d5db; }
+    .cards { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 20px; }
+    .card { background: #fff; border-radius: 16px; padding: 18px; box-shadow: 0 8px 22px rgba(15,23,42,.08); }
+    .card .label { color: #6b7280; font-size: 13px; }
+    .card .value { font-size: 28px; font-weight: 750; margin-top: 8px; }
+    .critical .value { color: #b91c1c; }
+    .high .value { color: #c2410c; }
+    .medium .value { color: #b45309; }
+    .low .value { color: #047857; }
+    .info .value { color: #2563eb; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 22px rgba(15,23,42,.08); }
+    th, td { text-align: left; padding: 12px 14px; vertical-align: top; border-bottom: 1px solid #e5e7eb; }
+    th { background: #f3f4f6; font-size: 13px; color: #374151; }
+    .badge { display:inline-block; padding: 4px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; color: white; }
+    .sev-CRITICAL { background: #b91c1c; }
+    .sev-HIGH { background: #c2410c; }
+    .sev-MEDIUM { background: #b45309; }
+    .sev-LOW { background: #047857; }
+    .sev-INFO { background: #2563eb; }
+    .section-title { margin: 26px 0 12px; font-size: 20px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all; }
+    @media (max-width: 900px) { .cards { grid-template-columns: repeat(2, 1fr); } table { font-size: 13px; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <h1>云原生安全检测报告</h1>
+      <p>生成时间：{{ generated_at }} ｜ 总风险分：{{ summary.risk_score }}/100 ｜ 风险等级：{{ summary.risk_level }}</p>
+    </div>
+
+    <div class="cards">
+      <div class="card"><div class="label">Total</div><div class="value">{{ summary.total }}</div></div>
+      <div class="card critical"><div class="label">Critical</div><div class="value">{{ summary.counts.CRITICAL }}</div></div>
+      <div class="card high"><div class="label">High</div><div class="value">{{ summary.counts.HIGH }}</div></div>
+      <div class="card medium"><div class="label">Medium</div><div class="value">{{ summary.counts.MEDIUM }}</div></div>
+      <div class="card low"><div class="label">Low</div><div class="value">{{ summary.counts.LOW }}</div></div>
+      <div class="card info"><div class="label">Info</div><div class="value">{{ summary.counts.INFO }}</div></div>
+    </div>
+
+    <h2 class="section-title">最近扫描任务</h2>
+    <table>
+      <thead><tr><th>ID</th><th>类型</th><th>目标</th><th>状态</th><th>创建时间</th><th>完成时间</th></tr></thead>
+      <tbody>
+        {% for task in tasks %}
+        <tr>
+          <td>{{ task.id }}</td><td>{{ task.task_type }}</td><td class="mono">{{ task.target }}</td><td>{{ task.status }}</td><td>{{ task.created_at }}</td><td>{{ task.finished_at or "-" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h2 class="section-title">风险详情与修复建议</h2>
+    <table>
+      <thead>
+        <tr><th>等级</th><th>规则</th><th>标题</th><th>目标</th><th>证据</th><th>修复建议</th><th>来源</th></tr>
+      </thead>
+      <tbody>
+      {% for f in findings %}
+        <tr>
+          <td><span class="badge sev-{{ f.severity }}">{{ f.severity }}</span></td>
+          <td class="mono">{{ f.rule_id }}</td>
+          <td>{{ f.title }}<br><small>{{ f.description }}</small></td>
+          <td class="mono">{{ f.target }}</td>
+          <td class="mono">{{ f.evidence }}</td>
+          <td>{{ f.remediation or f.fix }}</td>
+          <td>{{ f.source }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

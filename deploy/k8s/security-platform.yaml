@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-native-security-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloud-native-security-platform
+  template:
+    metadata:
+      labels:
+        app: cloud-native-security-platform
+    spec:
+      containers:
+        - name: api
+          image: cloud-native-security-platform:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloud-native-security-platform
+spec:
+  type: NodePort
+  selector:
+    app: cloud-native-security-platform
+  ports:
+    - port: 8000
+      targetPort: 8000
+      nodePort: 30080

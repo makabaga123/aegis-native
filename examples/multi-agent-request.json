@@ -1,0 +1,18 @@
+{
+  "dockerfile_text": "FROM ubuntu:latest\nUSER root\nRUN curl http://example.com/install.sh | bash\nENV PASSWORD=123456\nADD . /app\n",
+  "dockerfile_target": "inline-Dockerfile",
+  "k8s_yaml_text": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: risky\nspec:\n  hostNetwork: true\n  containers:\n    - name: app\n      image: nginx:latest\n      securityContext:\n        privileged: true\n        allowPrivilegeEscalation: true\n      volumeMounts:\n        - name: host\n          mountPath: /host\n  volumes:\n    - name: host\n      hostPath:\n        path: /\n",
+  "k8s_target": "inline-pod.yaml",
+  "runtime_events": [
+    {"event_type":"execve","process_name":"bash","cmdline":"bash -i","namespace":"default","pod":"risky","container":"app"},
+    {"event_type":"open","process_name":"cat","path":"/var/run/secrets/kubernetes.io/serviceaccount/token","namespace":"default","pod":"risky","container":"app"}
+  ],
+  "kernel_events": [
+    {
+      "rule":"Terminal shell in container",
+      "priority":"WARNING",
+      "output":"A shell was spawned in a container",
+      "output_fields":{"evt.type":"execve","proc.name":"bash","proc.cmdline":"bash -i","k8s.ns.name":"default","k8s.pod.name":"risky","container.name":"app"}
+    }
+  ]
+}

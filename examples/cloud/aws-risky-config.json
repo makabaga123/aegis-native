@@ -1,0 +1,22 @@
+{
+  "account": "demo-account",
+  "securityGroups": [
+    {
+      "name": "web-open",
+      "ingress": [
+        {"protocol": "tcp", "fromPort": 22, "toPort": 22, "cidr": "0.0.0.0/0"},
+        {"protocol": "tcp", "fromPort": 6443, "toPort": 6443, "cidr": "0.0.0.0/0"}
+      ]
+    }
+  ],
+  "buckets": [
+    {"name": "demo-public-bucket", "acl": "public-read", "encrypted": false, "mfaDelete": false}
+  ],
+  "iamPolicies": [
+    {"name": "too-powerful", "Statement": [{"Effect": "Allow", "Action": "*", "Resource": "*"}]}
+  ],
+  "credentials": {
+    "accessKey": "AKIA1234567890EXAMPLE",
+    "secretKey": "demo-secret-value"
+  }
+}

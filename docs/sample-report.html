@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>云原生安全检测报告</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; margin: 0; background: #f6f7fb; color: #1f2937; }
+    .container { max-width: 1180px; margin: 0 auto; padding: 28px; }
+    .hero { background: #111827; color: #fff; padding: 28px; border-radius: 18px; margin-bottom: 20px; }
+    .hero h1 { margin: 0 0 8px; font-size: 28px; }
+    .hero p { margin: 0; color: #d1d5db; }
+    .cards { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 20px; }
+    .card { background: #fff; border-radius: 16px; padding: 18px; box-shadow: 0 8px 22px rgba(15,23,42,.08); }
+    .card .label { color: #6b7280; font-size: 13px; }
+    .card .value { font-size: 28px; font-weight: 750; margin-top: 8px; }
+    .critical .value { color: #b91c1c; }
+    .high .value { color: #c2410c; }
+    .medium .value { color: #b45309; }
+    .low .value { color: #047857; }
+    .info .value { color: #2563eb; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 22px rgba(15,23,42,.08); }
+    th, td { text-align: left; padding: 12px 14px; vertical-align: top; border-bottom: 1px solid #e5e7eb; }
+    th { background: #f3f4f6; font-size: 13px; color: #374151; }
+    .badge { display:inline-block; padding: 4px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; color: white; }
+    .sev-CRITICAL { background: #b91c1c; }
+    .sev-HIGH { background: #c2410c; }
+    .sev-MEDIUM { background: #b45309; }
+    .sev-LOW { background: #047857; }
+    .sev-INFO { background: #2563eb; }
+    .section-title { margin: 26px 0 12px; font-size: 20px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; white-space: pre-wrap; word-break: break-all; }
+    @media (max-width: 900px) { .cards { grid-template-columns: repeat(2, 1fr); } table { font-size: 13px; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <h1>云原生安全检测报告</h1>
+      <p>生成时间：2026-05-24 08:13:13 ｜ 总风险分：100/100 ｜ 风险等级：严重风险</p>
+    </div>
+
+    <div class="cards">
+      <div class="card"><div class="label">Total</div><div class="value">46</div></div>
+      <div class="card critical"><div class="label">Critical</div><div class="value">15</div></div>
+      <div class="card high"><div class="label">High</div><div class="value">13</div></div>
+      <div class="card medium"><div class="label">Medium</div><div class="value">14</div></div>
+      <div class="card low"><div class="label">Low</div><div class="value">3</div></div>
+      <div class="card info"><div class="label">Info</div><div class="value">1</div></div>
+    </div>
+
+    <h2 class="section-title">最近扫描任务</h2>
+    <table>
+      <thead><tr><th>ID</th><th>类型</th><th>目标</th><th>状态</th><th>创建时间</th><th>完成时间</th></tr></thead>
+      <tbody>
+        
+        <tr>
+          <td>5</td><td>image_scan</td><td class="mono">nginx:latest</td><td>finished</td><td>2026-05-24T08:13:13.837676+00:00</td><td>2026-05-24T08:13:13.840455+00:00</td>
+        </tr>
+        
+        <tr>
+          <td>4</td><td>cloud_config_scan</td><td class="mono">/mnt/data/cloud-native-security-platform/examples/cloud/aws-risky-config.json</td><td>finished</td><td>2026-05-24T08:13:13.830827+00:00</td><td>2026-05-24T08:13:13.834697+00:00</td>
+        </tr>
+        
+        <tr>
+          <td>3</td><td>terraform_scan</td><td class="mono">/mnt/data/cloud-native-security-platform/examples/terraform/main.tf</td><td>finished</td><td>2026-05-24T08:13:13.824388+00:00</td><td>2026-05-24T08:13:13.827445+00:00</td>
+        </tr>
+        
+        <tr>
+          <td>2</td><td>k8s_yaml_scan</td><td class="mono">/mnt/data/cloud-native-security-platform/examples/vulnerable-k8s-yaml/deployment.yaml</td><td>finished</td><td>2026-05-24T08:13:13.816266+00:00</td><td>2026-05-24T08:13:13.819409+00:00</td>
+        </tr>
+        
+        <tr>
+          <td>1</td><td>dockerfile_scan</td><td class="mono">/mnt/data/cloud-native-security-platform/examples/vulnerable-dockerfile/Dockerfile</td><td>finished</td><td>2026-05-24T08:13:13.804805+00:00</td><td>2026-05-24T08:13:13.808002+00:00</td>
+        </tr>
+        
+      </tbody>
+    </table>
+
+    <h2 class="section-title">风险详情与修复建议</h2>
+    <table>
+      <thead>
+        <tr><th>等级</th><th>规则</th><th>标题</th><th>目标</th><th>证据</th><th>修复建议</th><th>来源</th></tr>
+      </thead>
+      <tbody>
+      
+        <tr>
+          <td><span class="badge sev-CRITICAL">CRITICAL</span></td>
+          <td class="mono">EDR005</td>
+          <td>容器访问敏感宿主机或凭据文件<br><small>访问 docker.sock、ServiceAccount Token、宿主机 kubelet 目录或系统敏感文件，可能导致提权、逃逸或集群 API 滥用。</small></td>
+          <td class="mono">default/vulnerable-app-6f9b7d/vulnerable-app</td>
+          <td class="mono">event_type=open; proc=cat; cmd=cat /var/run/secrets/kubernetes.io/serviceaccount/token; path=/var/run/secrets/kubernetes.io/serviceaccount/token; dst=; message=</td>
+          <td>排查访问进程；关闭不必要 hostPath；禁用 SA Token 自动挂载；禁止挂载 docker.sock；最小化 RBAC 权限。</td>
+          <td>runtime-edr-agent</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-CRITICAL">CRITICAL</span></td>
+          <td class="mono">CLOUD003</td>
+          <td>云配置中疑似硬编码凭据<br><small>AccessKey、Token、密码等凭据出现在配置清单中，可能被 Git、日志或报告泄露。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/cloud/aws-risky-config.json</td>
+          <td class="mono">$.credentials.secretKey=[MASKED_SECRET]</td>
+          <td>立即轮换凭据；迁移到 KMS/Secrets Manager/Key Vault/Secret Manager；避免明文进入 IaC 和日志。</td>
+          <td>cloud-config-agent</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-CRITICAL">CRITICAL</span></td>
+          <td class="mono">CLOUD003</td>
+          <td>云配置中疑似硬编码凭据<br><small>AccessKey、Token、密码等凭据出现在配置清单中，可能被 Git、日志或报告泄露。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/cloud/aws-risky-config.json</td>
+          <td class="mono">$.credentials.accessKey=[MASKED_SECRET]</td>
+          <td>立即轮换凭据；迁移到 KMS/Secrets Manager/Key Vault/Secret Manager；避免明文进入 IaC 和日志。</td>
+          <td>cloud-config-agent</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-CRITICAL">CRITICAL</span></td>
+          <td class="mono">CLOUD002</td>
+          <td>对象存储 Bucket 疑似公开访问<br><small>S3/GCS/Blob 等对象存储公开读写可能导致敏感数据泄露或供应链投毒。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/cloud/aws-risky-config.json</td>
+          <td class="mono">$.buckets[0].acl=public-read</td>
+          <td>关闭 public access；使用最小权限 Bucket Policy；开启访问日志、版本控制和加密。</td>
+          <td>cloud-config-agent</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-CRITICAL">CRITICAL</span></td>
+          <td class="mono">CLOUD001</td>
+          <td>云安全组/防火墙规则向公网开放<br><small>0.0.0.0/0 或 ::/0 暴露到公网，若端口为 SSH/RDP/数据库/控制面服务，风险极高。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/cloud/aws-risky-config.json</td>
+          <td class="mono">$.securityGroups[0].ingress[1].cidr=0.0.0.0/0</td>
+          <td>限制来源 CIDR；对管理端口使用 VPN/堡垒机；为公网服务增加 WAF、认证和速率限制。</td>
+          <td>cloud-config-agent</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-CRITICAL">CRITICAL</span></td>
+          <td class="mono">CLOUD001</td>
+          <td>云安全组/防火墙规则向公网开放<br><small>0.0.0.0/0 或 ::/0 暴露到公网，若端口为 SSH/RDP/数据库/控制面服务，风险极高。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/cloud/aws-risky-config.json</td>
+          <td class="mono">$.securityGroups[0].ingress[0].cidr=0.0.0.0/0</td>
+          <td>限制来源 CIDR；对管理端口使用 VPN/堡垒机；为公网服务增加 WAF、认证和速率限制。</td>
+          <td>cloud-config-agent</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-CRITICAL">CRITICAL</span></td>
+          <td class="mono">TF004</td>
+          <td>Terraform 对象存储可能公开访问<br><small>公开 Bucket 可能造成数据泄露或被攻击者写入恶意内容。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/terraform/main.tf</td>
+          <td class="mono">public-read or public access block disabled</td>
+          <td>启用 block public access；删除 public-read ACL；用最小权限 bucket policy。</td>
+          <td>terraform-agent</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-CRITICAL">CRITICAL</span></td>
+          <td class="mono">TF001</td>
+          <td>Terraform 安全组向公网开放<br><small>安全组/防火墙规则允许 0.0.0.0/0 或 ::/0 访问，管理端口和数据库端口尤其危险。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/terraform/main.tf</td>
+          <td class="mono">cidr_blocks = [&#34;0.0.0.0/0&#34;]</td>
+          <td>限制 cidr_blocks；使用堡垒机/VPN；把数据库和控制面端口放入私有网络。</td>
+          <td>terraform-agent</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-CRITICAL">CRITICAL</span></td>
+          <td class="mono">K8S025</td>
+          <td>RBAC 绑定高危集群管理员权限<br><small>cluster-admin 或默认 ServiceAccount 被绑定高权限，会显著扩大容器入侵后的集群控制面风险。</small></td>
+          <td class="mono">ClusterRoleBinding/default/default-admin</td>
+          <td class="mono">ClusterRoleBinding/default/default-admin: roleRef=cluster-admin; subjects=[{&#39;kind&#39;: &#39;ServiceAccount&#39;, &#39;name&#39;: &#39;default&#39;, &#39;namespace&#39;: &#39;default&#39;}]</td>
+          <td>避免把 cluster-admin 绑定给工作负载或默认账号；使用按 namespace/资源拆分的最小权限角色。</td>
+          <td>custom-k8s-yaml</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-CRITICAL">CRITICAL</span></td>
+          <td class="mono">K8S013</td>
+          <td>Secret 使用 stringData 存储明文敏感信息<br><small>stringData 中的内容是明文，提交到 Git 仓库后会直接泄露。</small></td>
+          <td class="mono">Secret/default/hardcoded-secret</td>
+          <td class="mono">Secret/default/hardcoded-secret: stringData keys=[&#39;password&#39;]</td>
+          <td>不要把 Secret 明文提交到仓库，使用 External Secrets、Sealed Secrets 或密钥管理服务。</td>
+          <td>custom-k8s-yaml</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-CRITICAL">CRITICAL</span></td>
+          <td class="mono">K8S015</td>
+          <td>环境变量中疑似硬编码敏感信息<br><small>明文敏感信息写在 YAML 中会被 Git、CI/CD 日志或集群 API 暴露。</small></td>
+          <td class="mono">Deployment/default/vulnerable-app:containers/app</td>
+          <td class="mono">Deployment/default/vulnerable-app:containers/app: env DB_[MASKED_SECRET]</td>
+          <td>改用 Secret 引用 valueFrom.secretKeyRef，并避免把 Secret 明文提交到仓库。</td>
+          <td>custom-k8s-yaml</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-CRITICAL">CRITICAL</span></td>
+          <td class="mono">K8S009</td>
+          <td>容器添加了高危 Linux Capability<br><small>SYS_ADMIN 或 ALL 权限过大，常见于容器逃逸和内核攻击链。</small></td>
+          <td class="mono">Deployment/default/vulnerable-app:containers/app</td>
+          <td class="mono">Deployment/default/vulnerable-app:containers/app: capabilities.add=[&#39;SYS_ADMIN&#39;, &#39;NET_ADMIN&#39;]</td>
+          <td>删除 SYS_ADMIN/ALL，只保留业务必须的 capability，并优先 drop ALL。</td>
+          <td>custom-k8s-yaml</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-CRITICAL">CRITICAL</span></td>
+          <td class="mono">K8S007</td>
+          <td>容器启用了 privileged 特权模式<br><small>特权容器拥有接近宿主机的权限，可能绕过容器隔离机制，是容器逃逸高危配置。</small></td>
+          <td class="mono">Deployment/default/vulnerable-app:containers/app</td>
+          <td class="mono">Deployment/default/vulnerable-app:containers/app: securityContext.privileged=true</td>
+          <td>删除 privileged: true；设置 allowPrivilegeEscalation: false；drop ALL capabilities；只按需添加最小 capability。</td>
+          <td>custom-k8s-yaml</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-CRITICAL">CRITICAL</span></td>
+          <td class="mono">K8S005</td>
+          <td>Pod 使用 hostPath 挂载宿主机路径<br><small>hostPath 会让容器访问宿主机文件系统，挂载敏感路径时可能导致容器逃逸或凭据泄露。</small></td>
+          <td class="mono">Deployment/default/vulnerable-app</td>
+          <td class="mono">Deployment/default/vulnerable-app: volume host-root hostPath=/</td>
+          <td>避免挂载宿主机敏感路径；改用 PVC/ConfigMap/Secret；如必须使用 hostPath，请限定只读并限制路径。</td>
+          <td>custom-k8s-yaml</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-CRITICAL">CRITICAL</span></td>
+          <td class="mono">DF004</td>
+          <td>Dockerfile 中疑似出现明文凭据<br><small>密钥写入 Dockerfile 会进入镜像构建上下文或镜像层，容易造成凭据泄露。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/vulnerable-dockerfile/Dockerfile</td>
+          <td class="mono">Line 3: ENV [MASKED_SECRET]</td>
+          <td>删除明文凭据，改用 Secret 管理、CI/CD 变量或运行时挂载。</td>
+          <td>custom-dockerfile</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-HIGH">HIGH</span></td>
+          <td class="mono">EDR006</td>
+          <td>容器修改系统关键路径<br><small>运行时修改 /etc、/usr/bin 等路径可能代表持久化、篡改或恶意工具落地。</small></td>
+          <td class="mono">default/vulnerable-app-6f9b7d/vulnerable-app</td>
+          <td class="mono">event_type=write; proc=sh; cmd=echo payload &gt; /usr/bin/.backdoor; path=/usr/bin/.backdoor; dst=; message=</td>
+          <td>启用 readOnlyRootFilesystem；检查镜像完整性；隔离工作负载并比对文件变更。</td>
+          <td>runtime-edr-agent</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-HIGH">HIGH</span></td>
+          <td class="mono">EDR007</td>
+          <td>疑似异常外联或 C2 通信<br><small>命中可疑域名、隧道服务、矿池协议或常见反连端口，可能是反弹 shell、C2 或数据外传。</small></td>
+          <td class="mono">default/vulnerable-app-6f9b7d/vulnerable-app</td>
+          <td class="mono">event_type=network_connect; proc=xmrig; cmd=xmrig -o stratum+tcp://pool.example:4444; path=; dst=stratum+tcp://pool.example; message=; port=4444</td>
+          <td>核查目标 IP/域名；阻断异常出站；为命名空间配置默认拒绝的 NetworkPolicy；检查进程树和凭据泄露。</td>
+          <td>runtime-edr-agent</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-HIGH">HIGH</span></td>
+          <td class="mono">EDR001</td>
+          <td>容器内启动交互式 Shell<br><small>生产容器中异常启动 shell 往往意味着 WebShell、命令执行漏洞或人工入侵排查行为。</small></td>
+          <td class="mono">default/vulnerable-app-6f9b7d/vulnerable-app</td>
+          <td class="mono">event_type=execve; proc=bash; cmd=bash -i; path=; dst=; message=</td>
+          <td>确认是否为授权操作；排查 Web/RCE 漏洞；禁用不必要 shell；使用只读根文件系统和最小权限用户。</td>
+          <td>runtime-edr-agent</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-HIGH">HIGH</span></td>
+          <td class="mono">CLOUD004</td>
+          <td>IAM 权限过宽<br><small>IAM Action 或权限字段使用 *，一旦凭据泄露会造成大范围横向移动和资源控制风险。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/cloud/aws-risky-config.json</td>
+          <td class="mono">$.iamPolicies[0].Statement[0].Action=*</td>
+          <td>按最小权限拆分策略；限制资源 ARN；为高危操作增加条件和审批；启用审计告警。</td>
+          <td>cloud-config-agent</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-HIGH">HIGH</span></td>
+          <td class="mono">TF003</td>
+          <td>Terraform IAM Policy 使用通配符 Action<br><small>IAM Action 为 * 代表权限过宽，凭据泄露后影响面扩大。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/terraform/main.tf</td>
+          <td class="mono">Action=&#34;*&#34;</td>
+          <td>按最小权限列出必要 Action，并限制 Resource 与 Condition。</td>
+          <td>terraform-agent</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-HIGH">HIGH</span></td>
+          <td class="mono">K8S023</td>
+          <td>RBAC 允许读取 Secret<br><small>读取 Secret 的权限一旦被 Pod Token 滥用，会导致凭据泄露和横向移动。</small></td>
+          <td class="mono">ClusterRole/default/risky-reader</td>
+          <td class="mono">ClusterRole/default/risky-reader: rules[1] can read secrets</td>
+          <td>只给确实需要的控制器读取指定 Secret；避免给普通工作负载 list/watch secrets。</td>
+          <td>custom-k8s-yaml</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-HIGH">HIGH</span></td>
+          <td class="mono">K8S022</td>
+          <td>RBAC 权限使用通配符<br><small>Role/ClusterRole 使用 * verbs 或 * resources，容易造成权限过宽和横向移动。</small></td>
+          <td class="mono">ClusterRole/default/risky-reader</td>
+          <td class="mono">ClusterRole/default/risky-reader: rules[0] verbs=[&#39;*&#39;] resources=[&#39;*&#39;]</td>
+          <td>按最小权限列出必要 verbs/resources，并限制 namespace 范围。</td>
+          <td>custom-k8s-yaml</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-HIGH">HIGH</span></td>
+          <td class="mono">K8S010</td>
+          <td>容器以 root 用户运行<br><small>root 用户运行会扩大入侵后的影响面。</small></td>
+          <td class="mono">Deployment/default/vulnerable-app:containers/app</td>
+          <td class="mono">Deployment/default/vulnerable-app:containers/app: runAsUser=0</td>
+          <td>设置 runAsNonRoot: true，并使用非 0 UID。</td>
+          <td>custom-k8s-yaml</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-HIGH">HIGH</span></td>
+          <td class="mono">K8S008</td>
+          <td>容器允许权限提升<br><small>allowPrivilegeEscalation=true 允许进程获得比父进程更高的权限。</small></td>
+          <td class="mono">Deployment/default/vulnerable-app:containers/app</td>
+          <td class="mono">Deployment/default/vulnerable-app:containers/app: allowPrivilegeEscalation=true</td>
+          <td>设置 allowPrivilegeEscalation: false。</td>
+          <td>custom-k8s-yaml</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-HIGH">HIGH</span></td>
+          <td class="mono">K8S002</td>
+          <td>Pod 启用了 hostPID<br><small>共享宿主机 PID 命名空间后，容器可能查看宿主机进程信息。</small></td>
+          <td class="mono">Deployment/default/vulnerable-app</td>
+          <td class="mono">Deployment/default/vulnerable-app: spec.hostPID=true</td>
+          <td>删除 hostPID: true，并使用标准容器隔离。</td>
+          <td>custom-k8s-yaml</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-HIGH">HIGH</span></td>
+          <td class="mono">K8S001</td>
+          <td>Pod 启用了 hostNetwork<br><small>共享宿主机网络命名空间会扩大攻击面，可能绕过部分网络隔离策略。</small></td>
+          <td class="mono">Deployment/default/vulnerable-app</td>
+          <td class="mono">Deployment/default/vulnerable-app: spec.hostNetwork=true</td>
+          <td>除非必须绑定宿主机网络，否则删除 hostNetwork: true。</td>
+          <td>custom-k8s-yaml</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-HIGH">HIGH</span></td>
+          <td class="mono">DF010</td>
+          <td>Dockerfile 未指定非 root 用户<br><small>未设置 USER 时，镜像默认可能以 root 身份运行。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/vulnerable-dockerfile/Dockerfile</td>
+          <td class="mono">No USER instruction found</td>
+          <td>在 Dockerfile 中创建普通用户，复制文件后执行 chown，并使用 USER appuser 运行应用。</td>
+          <td>custom-dockerfile</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-HIGH">HIGH</span></td>
+          <td class="mono">DF005</td>
+          <td>使用 curl/wget 管道执行脚本<br><small>远程脚本直接管道给 shell 执行，容易引入供应链风险。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/vulnerable-dockerfile/Dockerfile</td>
+          <td class="mono">Line 5: RUN curl -fsSL https://example.com/install.sh | bash</td>
+          <td>下载后校验哈希或签名，再以固定版本安装。</td>
+          <td>custom-dockerfile</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-MEDIUM">MEDIUM</span></td>
+          <td class="mono">FALCO-TERMINAL-SHELL-IN-CONTAINER</td>
+          <td>Falco 运行时告警：Terminal shell in container<br><small>Falco 在容器运行阶段捕获到异常行为，说明部署后的运行态可能存在攻击、误配置或违规操作。</small></td>
+          <td class="mono">default/vulnerable-app-6f9b7d/vulnerable-app</td>
+          <td class="mono">A shell was spawned in a container with an attached terminal (user=root command=bash container=vulnerable-app)</td>
+          <td>排查应用是否被 WebShell 或命令执行漏洞利用；限制容器内 shell 工具；启用只读根文件系统并降低容器权限。</td>
+          <td>falco</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-MEDIUM">MEDIUM</span></td>
+          <td class="mono">IMG001</td>
+          <td>镜像版本未固定或使用 latest<br><small>latest 或缺失 tag 会导致部署结果不稳定，不利于漏洞复现、回滚和治理。</small></td>
+          <td class="mono">nginx:latest</td>
+          <td class="mono">image=nginx:latest</td>
+          <td>固定镜像版本或 digest；定期重建基础镜像；优先选择 slim/alpine/distroless 等较小基础镜像。</td>
+          <td>custom-image</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-MEDIUM">MEDIUM</span></td>
+          <td class="mono">CLOUD006</td>
+          <td>高危账号或存储保护未启用 MFA<br><small>缺少 MFA 会增加账号接管、删除备份或破坏数据的风险。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/cloud/aws-risky-config.json</td>
+          <td class="mono">$.buckets[0].mfaDelete=False</td>
+          <td>为控制台账号、Root 账号、关键删除操作和存储版本删除启用 MFA 或等价强认证。</td>
+          <td>cloud-config-agent</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-MEDIUM">MEDIUM</span></td>
+          <td class="mono">CLOUD005</td>
+          <td>云资源未启用加密<br><small>存储、数据库或日志资源未加密会增加数据泄露后的影响面。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/cloud/aws-risky-config.json</td>
+          <td class="mono">$.buckets[0].encrypted=False</td>
+          <td>启用默认加密；优先使用 KMS/CMK；为快照、备份和日志同样开启加密。</td>
+          <td>cloud-config-agent</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-MEDIUM">MEDIUM</span></td>
+          <td class="mono">K8S026</td>
+          <td>Service 使用 NodePort 暴露服务<br><small>NodePort/LoadBalancer 会扩大外部攻击面，若暴露管理端口风险更高。</small></td>
+          <td class="mono">Service/default/vulnerable-service</td>
+          <td class="mono">Service/default/vulnerable-service: type=NodePort; ports=[{&#39;port&#39;: 80, &#39;targetPort&#39;: 80, &#39;nodePort&#39;: 30080}]</td>
+          <td>确认是否必须公网暴露；优先使用 Ingress + WAF/认证；管理端口只允许内网/VPN。</td>
+          <td>custom-k8s-yaml</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-MEDIUM">MEDIUM</span></td>
+          <td class="mono">K8S012</td>
+          <td>未启用只读根文件系统<br><small>可写根文件系统会让攻击者更容易落地恶意文件或修改程序。</small></td>
+          <td class="mono">Deployment/default/vulnerable-app:containers/app</td>
+          <td class="mono">Deployment/default/vulnerable-app:containers/app: readOnlyRootFilesystem not true</td>
+          <td>设置 readOnlyRootFilesystem: true，并将必要写入路径挂载为独立卷。</td>
+          <td>custom-k8s-yaml</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-MEDIUM">MEDIUM</span></td>
+          <td class="mono">K8S006</td>
+          <td>容器镜像使用 latest 或未固定版本<br><small>未固定镜像版本会导致部署结果不可预测，不利于漏洞追踪和回滚。</small></td>
+          <td class="mono">Deployment/default/vulnerable-app:containers/app</td>
+          <td class="mono">Deployment/default/vulnerable-app:containers/app: image=nginx:latest</td>
+          <td>固定镜像版本或 digest；定期重建基础镜像；优先选择 slim/alpine/distroless 等较小基础镜像。</td>
+          <td>custom-k8s-yaml</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-MEDIUM">MEDIUM</span></td>
+          <td class="mono">K8S004</td>
+          <td>Pod 显式自动挂载 ServiceAccount Token<br><small>Token 被容器内攻击者获取后，可能被用于访问 Kubernetes API。</small></td>
+          <td class="mono">Deployment/default/vulnerable-app</td>
+          <td class="mono">Deployment/default/vulnerable-app: automountServiceAccount[MASKED_SECRET]</td>
+          <td>不需要访问 API 的工作负载设置 automountServiceAccountToken: false。</td>
+          <td>custom-k8s-yaml</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-MEDIUM">MEDIUM</span></td>
+          <td class="mono">K8S020</td>
+          <td>未发现 NetworkPolicy 网络隔离策略<br><small>命名空间内缺少 NetworkPolicy 时，Pod 之间和出站流量通常更容易横向移动。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/vulnerable-k8s-yaml/deployment.yaml</td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/vulnerable-k8s-yaml/deployment.yaml: no NetworkPolicy in submitted manifests</td>
+          <td>为业务命名空间配置默认拒绝入站/出站的 NetworkPolicy，再按需放通必要流量。</td>
+          <td>custom-k8s-yaml</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-MEDIUM">MEDIUM</span></td>
+          <td class="mono">DF009</td>
+          <td>镜像暴露 SSH 端口<br><small>容器通常不需要运行 SSH 服务，暴露 22 端口会增加暴力破解和横向移动面。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/vulnerable-dockerfile/Dockerfile</td>
+          <td class="mono">Line 8: EXPOSE 22</td>
+          <td>固定镜像版本或 digest；定期重建基础镜像；优先选择 slim/alpine/distroless 等较小基础镜像。</td>
+          <td>custom-dockerfile</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-MEDIUM">MEDIUM</span></td>
+          <td class="mono">DF008</td>
+          <td>使用 chmod 777 赋予过宽权限<br><small>777 权限会让任意用户可读写执行文件，增加持久化和篡改风险。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/vulnerable-dockerfile/Dockerfile</td>
+          <td class="mono">Line 7: RUN chmod 777 /app</td>
+          <td>按最小权限原则设置文件权限，例如 755 或 640。</td>
+          <td>custom-dockerfile</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-MEDIUM">MEDIUM</span></td>
+          <td class="mono">DF003</td>
+          <td>Dockerfile 使用 ADD 指令<br><small>ADD 会自动解压本地压缩包，也可能拉取远程资源，可控性弱于 COPY。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/vulnerable-dockerfile/Dockerfile</td>
+          <td class="mono">Line 6: ADD . /app</td>
+          <td>除非确实需要自动解压能力，否则建议使用 COPY。</td>
+          <td>custom-dockerfile</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-MEDIUM">MEDIUM</span></td>
+          <td class="mono">DF007</td>
+          <td>镜像中安装了高风险运维工具<br><small>攻击者进入容器后可利用 curl、wget、nc、ssh 等工具进行下载、探测或横向移动。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/vulnerable-dockerfile/Dockerfile</td>
+          <td class="mono">Line 4: RUN apt-get update &amp;&amp; apt-get install -y curl wget netcat openssh-server</td>
+          <td>固定镜像版本或 digest；定期重建基础镜像；优先选择 slim/alpine/distroless 等较小基础镜像。</td>
+          <td>custom-dockerfile</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-MEDIUM">MEDIUM</span></td>
+          <td class="mono">DF001</td>
+          <td>基础镜像版本未固定或使用 latest<br><small>latest 标签会导致构建结果不可控，也会让漏洞复现和修复变困难。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/vulnerable-dockerfile/Dockerfile</td>
+          <td class="mono">Line 1: FROM ubuntu:latest</td>
+          <td>固定镜像版本或 digest；定期重建基础镜像；优先选择 slim/alpine/distroless 等较小基础镜像。</td>
+          <td>custom-dockerfile</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-LOW">LOW</span></td>
+          <td class="mono">K8S014</td>
+          <td>容器未完整设置资源请求和限制<br><small>缺少 CPU/Memory requests 或 limits 可能导致资源争抢或拒绝服务风险。</small></td>
+          <td class="mono">Deployment/default/vulnerable-app:containers/app</td>
+          <td class="mono">Deployment/default/vulnerable-app:containers/app: resources={}</td>
+          <td>为容器设置合理的 resources.requests 和 resources.limits。</td>
+          <td>custom-k8s-yaml</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-LOW">LOW</span></td>
+          <td class="mono">DF011</td>
+          <td>Dockerfile 未配置 HEALTHCHECK<br><small>缺少健康检查会降低运行时可观测性和自动恢复能力。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/vulnerable-dockerfile/Dockerfile</td>
+          <td class="mono">No HEALTHCHECK instruction found</td>
+          <td>根据应用端口或健康接口添加 HEALTHCHECK。</td>
+          <td>custom-dockerfile</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-LOW">LOW</span></td>
+          <td class="mono">DF006</td>
+          <td>apt 缓存未清理<br><small>未清理包管理缓存会让镜像变大，增加不必要攻击面。</small></td>
+          <td class="mono">/mnt/data/cloud-native-security-platform/examples/vulnerable-dockerfile/Dockerfile</td>
+          <td class="mono">Line 4: RUN apt-get update &amp;&amp; apt-get install -y curl wget netcat openssh-server</td>
+          <td>在同一 RUN 层中追加 rm -rf /var/lib/apt/lists/*。</td>
+          <td>custom-dockerfile</td>
+        </tr>
+      
+        <tr>
+          <td><span class="badge sev-INFO">INFO</span></td>
+          <td class="mono">TRIVY000</td>
+          <td>当前环境未安装 Trivy，已跳过真实镜像漏洞扫描<br><small>平台代码已经集成 Trivy 调用，但本机没有 trivy 命令，因此无法获取真实 CVE 结果。</small></td>
+          <td class="mono">nginx:latest</td>
+          <td class="mono">trivy command not found</td>
+          <td>固定镜像版本或 digest；定期重建基础镜像；优先选择 slim/alpine/distroless 等较小基础镜像。</td>
+          <td>trivy</td>
+        </tr>
+      
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

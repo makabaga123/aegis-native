@@ -1,0 +1,39 @@
+[
+  {
+    "event_type": "execve",
+    "namespace": "default",
+    "pod": "vulnerable-app-6f9b7d",
+    "container": "vulnerable-app",
+    "process_name": "bash",
+    "cmdline": "bash -i",
+    "user": "root"
+  },
+  {
+    "event_type": "open",
+    "namespace": "default",
+    "pod": "vulnerable-app-6f9b7d",
+    "container": "vulnerable-app",
+    "process_name": "cat",
+    "cmdline": "cat /var/run/secrets/kubernetes.io/serviceaccount/token",
+    "path": "/var/run/secrets/kubernetes.io/serviceaccount/token"
+  },
+  {
+    "event_type": "network_connect",
+    "namespace": "default",
+    "pod": "vulnerable-app-6f9b7d",
+    "container": "vulnerable-app",
+    "process_name": "xmrig",
+    "cmdline": "xmrig -o stratum+tcp://pool.example:4444",
+    "dst": "stratum+tcp://pool.example",
+    "dst_port": "4444"
+  },
+  {
+    "event_type": "write",
+    "namespace": "default",
+    "pod": "vulnerable-app-6f9b7d",
+    "container": "vulnerable-app",
+    "process_name": "sh",
+    "path": "/usr/bin/.backdoor",
+    "cmdline": "echo payload > /usr/bin/.backdoor"
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "time": "2026-05-24T10:00:00Z",
+  "rule": "Terminal shell in container",
+  "priority": "WARNING",
+  "output": "A shell was spawned in a container with an attached terminal (user=root command=bash container=vulnerable-app)",
+  "output_fields": {
+    "container.name": "vulnerable-app",
+    "k8s.ns.name": "default",
+    "k8s.pod.name": "vulnerable-app-6f9b7d",
+    "proc.cmdline": "bash"
+  }
+}

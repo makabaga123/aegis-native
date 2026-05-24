@@ -1,0 +1,7 @@
+driver:
+  kind: ebpf
+falco:
+  json_output: true
+  http_output:
+    enabled: true
+    url: http://security-platform.default.svc.cluster.local:8000/api/kernel/events
