@@ -61,8 +61,7 @@ Dockerfile 风险检测
 | MCP 风格工具层 | 将 Dockerfile、K8s、Cloud、Terraform、Runtime、Trivy 等能力封装为工具 |
 | 规则检测 | 稳定检测高危配置、危险命令、过权策略、运行时异常行为 |
 | Agent / LLM 检测 | 支持 DeepSeek、智谱、OpenAI / GPT、Ollama、OpenAI-compatible API |
-| Dockerfile 审计 | 检测 latest、root、ADD、硬编码密钥、危险工具、curl
-download 等风险 |
+| Dockerfile 审计 | 检测 latest、root、ADD、硬编码密钥、危险工具、curl download 等风险 |
 | 镜像漏洞扫描 | 调用 Trivy 扫描镜像 CVE、依赖漏洞和严重等级 |
 | Kubernetes 安全审计 | 检测 privileged、hostPath、hostNetwork、SYS_ADMIN、RBAC 过权、Service 暴露等 |
 | Terraform / IaC 审计 | 检测公网安全组、公开 Bucket、IAM `*` 权限、硬编码凭据、未加密资源等 |
