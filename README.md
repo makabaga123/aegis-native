@@ -11,13 +11,14 @@
   <a href="#"><img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-Frontend-3178C6"></a>
   <a href="#"><img alt="Kubernetes" src="https://img.shields.io/badge/Kubernetes-Security-326CE5"></a>
   <a href="#"><img alt="Multi Agent" src="https://img.shields.io/badge/Multi--Agent-Supervisor-purple"></a>
-  <a href="#"><img alt="MCP" src="https://img.shields.io/badge/MCP--style-Tools-orange"></a>
+  <a href="#"><img alt="MCP" src="https://img.shields.io/badge/MCP-2024--11--05-orange"></a>
+  <a href="#"><img alt="A2A" src="https://img.shields.io/badge/A2A-Google%20Protocol-blue"></a>
   <a href="#"><img alt="Runtime Security" src="https://img.shields.io/badge/Runtime-Falco%2FeBPF-red"></a>
   <a href="./LICENSE"><img alt="License" src="https://img.shields.io/badge/License-Apache--2.0-green"></a>
 </p>
 
 <p align="center">
-  <strong>Aegis</strong> 意为“神盾”，<strong>Native</strong> 表示“云原生”。AegisNative 旨在把容器、Kubernetes、云资源、IaC 与运行时安全事件统一到一个可扩展的 Agentic Security 平台中。
+  <strong>Aegis</strong> 意为"神盾"，<strong>Native</strong> 表示"云原生"。AegisNative 旨在把容器、Kubernetes、云资源、IaC 与运行时安全事件统一到一个可扩展的 Agentic Security 平台中。
 </p>
 
 ---
@@ -26,7 +27,7 @@
 
 **AegisNative** 是一个面向 DevSecOps / CNAPP / CWPP 场景的云原生安全检测与运行时风险治理平台。
 
-项目通过 **Supervisor 多 Agent 调度**、**A2A 风格智能体通信**、**MCP 风格工具调用层**，对 Dockerfile、容器镜像、Kubernetes YAML / RBAC、Terraform、云资源配置、Falco / eBPF 运行时事件进行统一检测、关联分析和修复建议生成。
+项目通过 **Supervisor 多 Agent 调度**、**标准 A2A 协议 (Google Agent-to-Agent)**、**标准 MCP 协议 (Model Context Protocol 2024-11-05)**，对 Dockerfile、容器镜像、Kubernetes YAML / RBAC、Terraform、云资源配置、Falco / eBPF 运行时事件进行统一检测、关联分析和修复建议生成。
 
 它不是单纯调用一个扫描器，而是把云原生安全治理拆成多个专业安全 Agent：
 
@@ -40,6 +41,7 @@ Dockerfile 风险检测
     + LLM 辅助解释与修复建议
     = 云原生安全风险治理闭环
 ```
+
 ---
 
 ## 适合用来做什么
@@ -49,6 +51,7 @@ Dockerfile 风险检测
 - AI Agent for Security 实践项目
 - CNAPP / CWPP / KSPM / CSPM 入门项目
 - Kubernetes 安全、容器安全、运行时安全样例
+- 标准 MCP / A2A 协议参考实现
 
 ---
 
@@ -57,8 +60,8 @@ Dockerfile 风险检测
 | 能力 | 说明 |
 |---|---|
 | 多 Agent 协作 | 使用 Supervisor 范式调度不同安全 Agent |
-| A2A 风格通信 | 使用 Agent Card、Message Envelope、Transcript 记录智能体协作过程 |
-| MCP 风格工具层 | 将 Dockerfile、K8s、Cloud、Terraform、Runtime、Trivy 等能力封装为工具 |
+| 标准 A2A 协议 | 实现 Google A2A 协议：AgentCard 发现、Skill 定义、Task 生命周期管理、Transcript 审计 |
+| 标准 MCP 协议 | 实现 JSON-RPC 2.0 协议，标准 initialize 握手，tools/list + tools/call，兼容 MCP 客户端 |
 | 规则检测 | 稳定检测高危配置、危险命令、过权策略、运行时异常行为 |
 | Agent / LLM 检测 | 支持 DeepSeek、智谱、OpenAI / GPT、Ollama、OpenAI-compatible API |
 | Dockerfile 审计 | 检测 latest、root、ADD、硬编码密钥、危险工具、curl download 等风险 |
@@ -76,7 +79,7 @@ Dockerfile 风险检测
 ## 架构设计
 
 ```text
-用户 / CI Pipeline / SOC / Runtime Sensor
+用户 / CI Pipeline / SOC / Runtime Sensor / MCP Client
         │
         │ Dockerfile / Image / K8s YAML / Terraform / Cloud JSON / Runtime Events
         ▼
@@ -84,23 +87,209 @@ Dockerfile 风险检测
 │                        SecuritySupervisorAgent                        │
 │                                                                      │
 │  1. Plan      判断输入类型，决定需要调用哪些 Agent                    │
-│  2. Dispatch  通过 A2A 风格消息分发任务                               │
-│  3. Execute   通过 MCP 风格工具层调用安全检测能力                     │
+│  2. Dispatch  通过标准 A2A 消息分发任务                               │
+│  3. Execute   通过标准 MCP JSON-RPC 2.0 调用安全检测工具              │
 │  4. Correlate 关联配置风险、漏洞风险、运行时事件，生成攻击路径         │
 │  5. Respond   生成修复建议、优先级动作和报告数据                     │
 └──────────────────────────────────────────────────────────────────────┘
         │
-        ├── DockerfileAgent
-        ├── ImageSecurityAgent
-        ├── KubernetesSecurityAgent
-        ├── CloudSecurityAgent
-        ├── RuntimeEDRAgent
+        ├── DockerfileAgent        ← MCP: dockerfile.rule_scan
+        ├── ImageSecurityAgent     ← MCP: image.trivy_scan
+        ├── KubernetesSecurityAgent ← MCP: k8s.rule_scan
+        ├── CloudSecurityAgent     ← MCP: terraform.rule_scan, cloud.rule_scan
+        ├── RuntimeEDRAgent        ← MCP: kernel.normalize_events, runtime.behavior_scan
         ├── AttackPathAgent
         ├── RemediationAgent
         └── ReportAgent
         │
         ▼
 Findings + Risk Score + Attack Paths + Priority Actions + HTML Report
+```
+
+---
+
+## 标准 MCP 协议 (Model Context Protocol)
+
+项目实现了标准的 **MCP 2024-11-05** 协议，基于 **JSON-RPC 2.0** 消息格式，支持完整的 MCP 生命周期：
+
+```
+Client                          Server
+  │                                │
+  │──── initialize ───────────────>│  握手协商协议版本和能力
+  │<─── InitializeResult ──────────│
+  │                                │
+  │──── notifications/initialized ─>│  客户端就绪通知
+  │                                │
+  │──── tools/list ───────────────>│  列出所有可用工具
+  │<─── ListToolsResult ───────────│
+  │                                │
+  │──── tools/call ───────────────>│  调用指定工具
+  │<─── CallToolResult ────────────│
+```
+
+### MCP 工具列表
+
+| 工具名称 | 描述 |
+|---|---|
+| `dockerfile.rule_scan` | Dockerfile 安全审计 |
+| `k8s.rule_scan` | Kubernetes YAML / Pod Security / RBAC 审计 |
+| `terraform.rule_scan` | Terraform / IaC 云配置错误审计 |
+| `cloud.rule_scan` | 云配置公开暴露、IAM、加密风险审计 |
+| `runtime.behavior_scan` | 运行时 EDR 行为检测 |
+| `kernel.normalize_events` | Falco/eBPF/Tetragon/KubeArmor 事件归一化 |
+| `image.trivy_scan` | Trivy 镜像 CVE 漏洞扫描 |
+
+### 标准 MCP JSON-RPC 2.0 调用
+
+```bash
+# 1. 初始化握手
+curl -X POST http://127.0.0.1:8000/api/mcp/message \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "initialize",
+    "params": {
+      "protocolVersion": "2024-11-05",
+      "capabilities": {},
+      "clientInfo": {"name": "my-client", "version": "1.0.0"}
+    }
+  }'
+
+# 2. 列出工具
+curl -X POST http://127.0.0.1:8000/api/mcp/message \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 2,
+    "method": "tools/list",
+    "params": {}
+  }'
+
+# 3. 调用工具
+curl -X POST http://127.0.0.1:8000/api/mcp/message \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 3,
+    "method": "tools/call",
+    "params": {
+      "name": "dockerfile.rule_scan",
+      "arguments": {
+        "text": "FROM ubuntu:latest\nUSER root\nADD . /app"
+      }
+    }
+  }'
+```
+
+### 兼容标准 MCP 客户端
+
+可将 AegisNative 配置为 Claude Desktop、Continue、Cursor 等支持 MCP 的工具的后端：
+
+```json
+{
+  "mcpServers": {
+    "aegis-native": {
+      "url": "http://127.0.0.1:8000/api/mcp/message",
+      "transport": "streamable-http"
+    }
+  }
+}
+```
+
+### REST 便捷接口（向后兼容）
+
+```bash
+# 查看工具列表
+curl http://127.0.0.1:8000/api/mcp/tools
+
+# 调用工具
+curl -X POST http://127.0.0.1:8000/api/mcp/call \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "dockerfile.rule_scan",
+    "arguments": {
+      "text": "FROM ubuntu:latest\nUSER root\nADD . /app"
+    }
+  }'
+```
+
+---
+
+## 标准 A2A 协议 (Google Agent-to-Agent)
+
+项目实现了标准的 **Google A2A 协议**，包括 AgentCard 发现、Skill 定义、Task 生命周期管理和完整的对话 Transcript 审计。
+
+### AgentCard 示例
+
+每个 Agent 都暴露标准 A2A AgentCard：
+
+```json
+{
+  "name": "kubernetes-agent",
+  "description": "Audits Kubernetes YAML, Pod Security, RBAC, exposure and policy gaps.",
+  "url": "/a2a/kubernetes-agent",
+  "provider": {"organization": "AegisNative"},
+  "version": "2.0.0",
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "stateTransitionHistory": false
+  },
+  "defaultInputModes": ["text", "file"],
+  "defaultOutputModes": ["text", "json"],
+  "skills": [
+    {
+      "id": "k8s_yaml_scan",
+      "name": "Kubernetes YAML Security Audit",
+      "description": "Detects privileged containers, hostPath, hostNetwork...",
+      "tags": ["security", "kubernetes", "pod-security", "rbac"],
+      "inputModes": ["text"],
+      "outputModes": ["json"]
+    }
+  ]
+}
+```
+
+### A2A API 端点
+
+```text
+# Agent 发现
+GET  /a2a/.well-known/agent-card.json          # 所有 Agent 卡片
+GET  /a2a/{agent-name}/.well-known/agent-card.json  # 单个 Agent 卡片
+GET  /a2a/agents                                # Agent 列表
+
+# Task 操作
+POST /a2a/{agent-name}/tasks/send               # 发送任务到指定 Agent
+GET  /a2a/tasks/{taskId}                        # 查询任务状态
+POST /a2a/tasks/{taskId}/cancel                 # 取消任务
+
+# Supervisor 聚合入口
+POST /a2a/supervisor/tasks/send                 # 通过 Supervisor 执行完整分析
+```
+
+### A2A 调用示例
+
+```bash
+# 发现所有 Agent
+curl http://127.0.0.1:8000/a2a/.well-known/agent-card.json
+
+# 查看 Kubernetes Agent 卡片
+curl http://127.0.0.1:8000/a2a/kubernetes-agent/.well-known/agent-card.json
+
+# 通过 Supervisor 执行多 Agent 分析
+curl -X POST http://127.0.0.1:8000/a2a/supervisor/tasks/send \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": {
+      "parts": [
+        {
+          "type": "text",
+          "text": "{\"dockerfile_text\": \"FROM ubuntu:latest\\nUSER root\"}"
+        }
+      ]
+    }
+  }'
 ```
 
 ---
@@ -119,58 +308,7 @@ SecuritySupervisorAgent
 └── ReportAgent              # 报告数据整理
 ```
 
-每个 Agent 都有自己的能力描述，类似：
-
-```json
-{
-  "name": "KubernetesSecurityAgent",
-  "description": "Audit Kubernetes workload, RBAC and exposure risks",
-  "capabilities": ["k8s_yaml_scan", "rbac_scan", "exposure_scan"],
-  "input_types": ["k8s_yaml_text"],
-  "output_types": ["finding"]
-}
-```
-
-> 说明：当前项目实现的是轻量级本地 A2A-style 消息协议，便于学习和工程演示。它保留了 Agent Card、Message Envelope、Transcript 等关键概念，后续可以继续对接更完整的 A2A 协议实现。
-
----
-
-## MCP 风格工具层
-
-项目将安全能力封装为可调用工具，供 Supervisor 和各个 Agent 调用。
-
-当前工具包括：
-
-```text
-dockerfile.rule_scan
-k8s.rule_scan
-terraform.rule_scan
-cloud.rule_scan
-runtime.behavior_scan
-kernel.normalize_events
-image.trivy_scan
-```
-
-查看工具列表：
-
-```bash
-curl http://127.0.0.1:8000/api/mcp/tools
-```
-
-调用工具示例：
-
-```bash
-curl -X POST http://127.0.0.1:8000/api/mcp/call \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "dockerfile.rule_scan",
-    "arguments": {
-      "dockerfile_text": "FROM ubuntu:latest\nUSER root\nADD . /app"
-    }
-  }'
-```
-
-> 说明：当前实现为 MCP-style 本地工具抽象，主要用于学习和工程演示。后续可以替换为标准 MCP Server / Client 实现。
+每个 Agent 都实现了标准的 A2A AgentCard，通过 MCP 工具调用安全检测能力，并返回标准化的 findings。
 
 ---
 
@@ -429,7 +567,41 @@ Demo 会自动执行：
 
 ## API 使用示例
 
-### 多 Agent 分析
+### 标准 MCP JSON-RPC 2.0
+
+```bash
+# 初始化握手
+curl -X POST http://127.0.0.1:8000/api/mcp/message \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"cli","version":"1.0"}}}'
+
+# 列出工具
+curl -X POST http://127.0.0.1:8000/api/mcp/message \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'
+
+# 调用工具
+curl -X POST http://127.0.0.1:8000/api/mcp/message \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"k8s.rule_scan","arguments":{"text":"apiVersion: v1\nkind: Pod\nspec:\n  containers:\n  - name: app\n    securityContext:\n      privileged: true"}}}'
+```
+
+### 标准 A2A 协议
+
+```bash
+# 发现所有 Agent
+curl http://127.0.0.1:8000/a2a/.well-known/agent-card.json
+
+# 查看单个 Agent 卡片
+curl http://127.0.0.1:8000/a2a/dockerfile-agent/.well-known/agent-card.json
+
+# 通过 A2A 发送任务
+curl -X POST http://127.0.0.1:8000/a2a/supervisor/tasks/send \
+  -H "Content-Type: application/json" \
+  -d @examples/multi-agent-request.json
+```
+
+### 多 Agent 分析（REST API）
 
 ```bash
 curl -X POST http://127.0.0.1:8000/api/multi-agent/analyze \
@@ -455,20 +627,6 @@ curl -X POST http://127.0.0.1:8000/api/multi-agent/analyze-files \
 curl -X POST http://127.0.0.1:8000/api/kernel/events \
   -H "Content-Type: application/json" \
   --data @examples/kernel/falco-shell-event.json
-```
-
-### 批量接收内核事件
-
-```bash
-curl -X POST http://127.0.0.1:8000/api/kernel/events/batch \
-  -H "Content-Type: application/json" \
-  --data @examples/kernel/tetragon-exec-event.json
-```
-
-### 查看 MCP 工具
-
-```bash
-curl http://127.0.0.1:8000/api/mcp/tools
 ```
 
 ---
@@ -511,10 +669,10 @@ docs/EDR_RUNTIME_DESIGN.md
 ```text
 aegis-native/
 ├── backend/
-│   ├── agents/                 # 多 Agent 实现
-│   ├── a2a/                    # A2A-style 通信协议
-│   ├── mcp/                    # MCP-style 工具层
-│   ├── api/                    # FastAPI 路由
+│   ├── agents/                 # 多 Agent 实现（标准 A2A AgentCard）
+│   ├── a2a/                    # 标准 Google A2A 协议实现
+│   ├── mcp/                    # 标准 MCP JSON-RPC 2.0 协议实现
+│   ├── api/                    # FastAPI 路由（含 MCP + A2A 标准端点）
 │   ├── scanners/               # 规则检测与事件归一化
 │   ├── llm/                    # LLM Provider 适配层
 │   ├── reports/                # 报告生成
@@ -569,14 +727,14 @@ python -m pytest -q
 - [x] Terraform / 云配置检测
 - [x] Falco / eBPF 运行时事件接入
 - [x] Supervisor 多 Agent 调度
-- [x] A2A-style 智能体通信
-- [x] MCP-style 工具层
+- [x] 标准 MCP 协议 (JSON-RPC 2.0, 2024-11-05)
+- [x] 标准 A2A 协议 (Google Agent-to-Agent)
 - [x] DeepSeek / 智谱 / GPT / Ollama Provider 适配
 - [x] HTML 报告生成
 - [x] Web Dashboard (React 19 + TypeScript + Tailwind 4)
-- [ ] 标准 MCP Server / Client 兼容
-- [ ] 更完整的 A2A 协议兼容
-- [ ] Web Dashboard
+- [x] MCP 兼容客户端支持 (Claude Desktop, Continue, Cursor 等)
+- [ ] MCP stdio Transport 支持
+- [ ] A2A 流式响应 (SSE)
 - [ ] PDF 报告导出
 - [ ] GitHub Actions 扫描插件
 - [ ] Kubernetes Admission Controller
@@ -609,7 +767,8 @@ python -m pytest -q
 - 新增 Dockerfile / Kubernetes / Terraform 检测规则
 - 增强 Runtime EDR 检测逻辑
 - 对接更多 LLM Provider
-- 对接标准 MCP / A2A 实现
+- 增加 MCP stdio Transport 支持
+- 增加 A2A 流式响应支持
 - 完善前端 Dashboard 功能和交互
 - 增强报告模板
 - 增加真实靶场样例
@@ -619,4 +778,3 @@ python -m pytest -q
 ## License
 
 本项目采用 [Apache License 2.0](./LICENSE) 开源。
-

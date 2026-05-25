@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from backend.a2a import A2AMessage, AgentCard
+from backend.a2a import A2AMessage, AgentCapabilities, AgentCard, AgentProvider, AgentSkill
 from backend.agents.base import BaseSecurityAgent
 from backend.scanners.agent_llm_scanner import llm_analyze_artifact
 
@@ -13,6 +13,30 @@ class DockerfileAgent(BaseSecurityAgent):
         return AgentCard(
             name=self.name,
             description="Detects insecure Dockerfile build practices through MCP rules and optional LLM agent review.",
+            url="/a2a/dockerfile-agent",
+            provider=AgentProvider(organization="AegisNative"),
+            version="2.0.0",
+            a2a_capabilities=AgentCapabilities(),
+            defaultInputModes=["text", "file"],
+            defaultOutputModes=["text", "json"],
+            skills=[
+                AgentSkill(
+                    id="dockerfile_rule_scan",
+                    name="Dockerfile Security Scan",
+                    description="Rule-based detection of latest tag, root user, ADD vs COPY, hardcoded secrets, dangerous tools, curl-pipe-bash, missing HEALTHCHECK",
+                    tags=["security", "docker", "container", "supply-chain"],
+                    inputModes=["text"],
+                    outputModes=["json"],
+                ),
+                AgentSkill(
+                    id="dockerfile_llm_review",
+                    name="Dockerfile LLM Review",
+                    description="LLM-assisted review of Dockerfile best practices and supply chain risks",
+                    tags=["security", "docker", "llm", "supply-chain"],
+                    inputModes=["text"],
+                    outputModes=["json"],
+                ),
+            ],
             capabilities=["dockerfile_rule_scan", "dockerfile_llm_review", "supply_chain_baseline"],
             input_types=["dockerfile_text"],
             output_types=["findings", "agent_notes"],

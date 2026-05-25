@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from backend.a2a import A2AMessage, AgentCard
+from backend.a2a import A2AMessage, AgentCapabilities, AgentCard, AgentProvider, AgentSkill
 from backend.agents.base import BaseSecurityAgent
 from backend.scanners.agent_llm_scanner import llm_analyze_artifact
 
@@ -13,6 +13,22 @@ class KubernetesSecurityAgent(BaseSecurityAgent):
         return AgentCard(
             name=self.name,
             description="Audits Kubernetes YAML, Pod Security, RBAC, exposure and policy gaps.",
+            url="/a2a/kubernetes-agent",
+            provider=AgentProvider(organization="AegisNative"),
+            version="2.0.0",
+            a2a_capabilities=AgentCapabilities(),
+            defaultInputModes=["text", "file"],
+            defaultOutputModes=["text", "json"],
+            skills=[
+                AgentSkill(
+                    id="k8s_yaml_scan",
+                    name="Kubernetes YAML Security Audit",
+                    description="Detects privileged containers, hostPath, hostNetwork, hostPID, SYS_ADMIN, missing runAsNonRoot/readOnlyRootFilesystem, RBAC wildcards, Secret access, pods/exec, NodePort/LoadBalancer exposure",
+                    tags=["security", "kubernetes", "pod-security", "rbac"],
+                    inputModes=["text"],
+                    outputModes=["json"],
+                ),
+            ],
             capabilities=["pod_security", "rbac_review", "network_exposure", "llm_k8s_reasoning"],
             input_types=["k8s_yaml_text"],
             output_types=["findings", "attack_primitives"],

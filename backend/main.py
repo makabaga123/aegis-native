@@ -7,13 +7,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from backend.api import agent, falco, kernel, mcp_api, multi_agent, report, runtime, scan
+from backend.api import a2a_api, agent, falco, kernel, mcp_api, multi_agent, report, runtime, scan
 from backend.models.database import init_db
 
 app = FastAPI(
     title="Cloud Native Security Platform",
     description="基于 Kubernetes 的云原生安全检测与风险治理平台",
-    version="1.0.0",
+    version="2.0.0",
 )
 
 app.add_middleware(
@@ -31,6 +31,7 @@ app.include_router(runtime.router)
 app.include_router(agent.router)
 app.include_router(multi_agent.router)
 app.include_router(mcp_api.router)
+app.include_router(a2a_api.router)
 app.include_router(kernel.router)
 
 FRONTEND_DIST = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
@@ -60,13 +61,16 @@ def health():
 def api_index():
     return {
         "name": "AegisNative API",
-        "version": "1.0.0",
+        "version": "2.0.0",
         "endpoints": {
             "scan": "/api/scan/",
             "runtime": "/api/runtime/",
             "agent": "/api/agent/",
             "multi_agent": "/api/multi-agent/",
             "mcp": "/api/mcp/",
+            "mcp_message": "/api/mcp/message (JSON-RPC 2.0)",
+            "a2a": "/a2a/ (Agent-to-Agent)",
+            "a2a_discovery": "/a2a/.well-known/agent-card.json",
             "report": "/api/report/",
             "kernel": "/api/kernel/",
             "falco": "/api/falco/",
