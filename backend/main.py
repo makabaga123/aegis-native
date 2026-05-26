@@ -35,8 +35,9 @@ app.include_router(a2a_api.router)
 app.include_router(kernel.router)
 
 FRONTEND_DIST = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
+SERVE_FRONTEND = os.environ.get("SERVE_FRONTEND", "0") == "1"
 
-if os.path.isdir(FRONTEND_DIST):
+if SERVE_FRONTEND and os.path.isdir(FRONTEND_DIST):
     app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIST, "assets")), name="assets")
 
     @app.get("/{full_path:path}")
